@@ -9,8 +9,11 @@ $extensionArray = ["png", "jpg", "jpeg", "gif"];
 
 /**
  * コピーライト
+ * @return string $imgPath
+ * @return string $copyraightString
+ * @return string $position left or right
  */
-function generate_Copylight($imgPath, $copyrightString) {
+function generate_Copylight($imgPath, $copyrightString ,$position) {
     
     // 拡張子を取得
     $extension = pathinfo($imgPath)["extension"];
@@ -48,9 +51,20 @@ function generate_Copylight($imgPath, $copyrightString) {
         // パディング
     $padding = 10;
         // 座標計算
-    $x = $imageWidth - $textWidth - $padding;
-    $y = $imageHeight - $padding;
+    switch ($position) {
+        case "right":
+            // 右下
+            $x = $imageWidth - $textWidth - $padding;
+            break;
 
+        case "left":
+            // 左下
+            $x = $padding;
+            break;
+    }
+
+    $y = $imageHeight - $padding;
+    
     // 文字入れ
     $black = imagecolorallocatealpha($image, 0, 0, 0, 64);    
     imagettftext($image, $fontSize, 0, $x, $y, $black, $fontPath, $copyrightString);
@@ -76,7 +90,7 @@ function generate_Copylight($imgPath, $copyrightString) {
 }
 
 try {
-    generate_Copylight($imgPngPath, "@copyright");
+    generate_Copylight($imgPngPath, "@copyright", "left");
 } catch (Exception $e) {
     echo "エラー: " . htmlspecialchars($e->getMessage());
 }
